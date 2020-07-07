@@ -6,6 +6,11 @@
 
 This is a lightweight library for building and parsing HL7 2.x messages, for .Net Standard and .Net Core. It is not tied to any particular version of HL7 nor validates against one. 
 
+----
+Fork changes log
+- Made trigger event (MSH.9.2) optional.
+
+
 ## Object construction
 
 ### Create a Message object and pass raw HL7 message in text format
