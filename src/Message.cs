@@ -782,9 +782,14 @@ namespace HL7.Dotnetcore
                             {
                                 this.MessageStructure = MSH_9_comps[0] + "_" + MSH_9_comps[1];
                             }
+                            else if (MSH_9_comps.Count == 1)
+                            {
+                                this.MessageStructure = MSH_9_comps[0];
+                            }
                             else
                             {
-                                throw new HL7Exception("Message Type & Trigger Event value not found in message", HL7Exception.UNSUPPORTED_MESSAGE_TYPE);
+
+                                throw new HL7Exception("Message Type value not found in message", HL7Exception.UNSUPPORTED_MESSAGE_TYPE);
                             }
                         }
                         else

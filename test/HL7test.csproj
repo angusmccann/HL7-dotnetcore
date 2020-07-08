@@ -11,6 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="2019269.239652426.HI.P.F3K058-J">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Sample-ADT.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

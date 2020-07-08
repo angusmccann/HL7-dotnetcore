@@ -1,6 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace HL7.Dotnetcore.Test
@@ -13,15 +15,13 @@ namespace HL7.Dotnetcore.Test
 
         public static void Main(string[] args)
         {
-            // var test = new HL7Test();
-            // test.RepetitionTest();
+            var test = new HL7Test();
         }
 
         public HL7Test()
         {
             var path = Path.GetDirectoryName(typeof(HL7Test).GetTypeInfo().Assembly.Location) + "/";
-            this.HL7_ORM = File.ReadAllText(path + "Sample-ORM.txt");
-            this.HL7_ADT = File.ReadAllText(path + "Sample-ADT.txt");
+            var message = ParseHL7(path + "2019269.239652426.HI.P.F3K058-J");
         }
 
         [TestMethod]
@@ -410,6 +410,57 @@ PV1||O|NWSLED^^^NYULHLI^^^^^LI NW SLEEP DISORDER^^DEPID||||1447312459^DOE^MICHAE
 
             string attendingDrId = message.GetValue(index);
             Assert.AreEqual(expected, attendingDrId);
+        }
+
+        private Message ParseHL7(string path)
+        {
+            try
+            {
+                var lines = File.ReadLines(path).ToList();
+
+                lines[lines.Count - 1] = lines[lines.Count - 1].Replace(@"\R\", string.Empty);
+                lines[lines.Count - 1] = Regex.Replace(lines[lines.Count - 1], @"(\\[0-9]+)", string.Empty);
+
+                foreach (var line in lines.ToList())
+                {
+                    if (lines.Count - lines.IndexOf(line) == 1)
+                        lines[lines.Count - 1] = lines[lines.Count - 1].Replace(@"\.br", string.Empty);
+                    else
+                        lines[lines.IndexOf(line)] = lines[lines.IndexOf(line)].Replace(@"\.br\", " "); 
+                }
+
+                lines[lines.Count - 1] = lines[lines.Count - 1].Replace(@"\.nf", string.Empty);
+                lines[lines.Count - 1] = lines[lines.Count - 1].Replace(@"\SBLD", string.Empty);
+                lines[lines.Count - 1] = lines[lines.Count - 1].Replace(@"\EBLD", string.Empty);
+                lines[lines.Count - 1] = lines[lines.Count - 1].Replace(@"\", string.Empty);
+
+                string rawMessage = string.Join("\n", lines);
+
+                var message = new Message(rawMessage);
+
+                if (!message.ParseMessage())
+                {
+                    string fileName = "";
+                    try
+                    {
+                        fileName = path.Split("\\").Last().Split('.')[0];
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"{ex.Message} {ex.StackTrace}");
+                    }
+                    return null;
+                }
+                else
+                    return message;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"{e.Message} {e.StackTrace}");
+                return null;
+            }
+
         }
     }
 }
