@@ -21,7 +21,7 @@ namespace HL7.Dotnetcore.Test
         public HL7Test()
         {
             var path = Path.GetDirectoryName(typeof(HL7Test).GetTypeInfo().Assembly.Location) + "/";
-            var message = ParseHL7(path + "2019269.239652426.HI.P.F3K058-J");
+            var message = ParseHL7(path + "example.hl7");
         }
 
         [TestMethod]
@@ -424,9 +424,16 @@ PV1||O|NWSLED^^^NYULHLI^^^^^LI NW SLEEP DISORDER^^DEPID||||1447312459^DOE^MICHAE
                 foreach (var line in lines.ToList())
                 {
                     if (lines.Count - lines.IndexOf(line) == 1)
+                    {
                         lines[lines.Count - 1] = lines[lines.Count - 1].Replace(@"\.br", string.Empty);
+                        lines[lines.Count - 1] = lines[lines.Count - 1].Replace(@"\X0A", @"\X00A");
+
+                    }
                     else
-                        lines[lines.IndexOf(line)] = lines[lines.IndexOf(line)].Replace(@"\.br\", " "); 
+                    {
+                        lines[lines.IndexOf(line)] = lines[lines.IndexOf(line)].Replace(@"\.br\", " ");
+                        lines[lines.IndexOf(line)] = lines[lines.IndexOf(line)].Replace(@"\X0A", @"\X00A");
+                    }
                 }
 
                 lines[lines.Count - 1] = lines[lines.Count - 1].Replace(@"\.nf", string.Empty);

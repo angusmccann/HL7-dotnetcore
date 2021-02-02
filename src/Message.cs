@@ -42,6 +42,9 @@ namespace HL7.Dotnetcore
                 var arr1 = MessageHelper.SplitString(this.HL7Message, this.Encoding.SegmentDelimiter, StringSplitOptions.RemoveEmptyEntries);
                 var arr2 = MessageHelper.SplitString(obj as string, this.Encoding.SegmentDelimiter, StringSplitOptions.RemoveEmptyEntries);
 
+                var arr1string = string.Join("", arr1);
+                var arr2string = string.Join("", arr2);
+
                 return arr1.SequenceEqual(arr2);
             }
 
